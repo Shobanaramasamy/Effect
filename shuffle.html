@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body style="width: 100wh; height: 100vh; background-color: rgb(24, 27, 39); color: aliceblue;">
+    <div id="shuffleText" style="display: flex; justify-content: center; height: 100%; align-items: center;"></div>
+    <script>
+        function shuffleText(text) {
+            let shuffledText = "";
+            const characters = text.split("");
+            for (let i = 0; i < characters.length - 1; i++) {
+                const randomIndex = Math.floor(Math.random() * (i + 1));
+                [characters[i], characters[randomIndex]] = [
+                    characters[randomIndex],
+                    characters[i],
+                ];
+                console.log("shuffled text", [characters[i], characters[randomIndex]])
+            }
+            console.log("characters", characters)
+            shuffledText = characters.join("");
+            return shuffledText;
+        }
+     
+        function animateShuffle(originalText, shuffledText) {
+            const element = document.getElementById("shuffleText");
+            const animationSpeed = 10000;
+            const duration = 3000;
+            const originalDelay = 100;
+
+            let startTime = null;
+            let shuffledProgress = 0;
+            let originalIndex = 0;
+
+            function step(timestamp) {
+                console.log("timestamp", timestamp)
+                if (!startTime) startTime = timestamp;
+                const progress = timestamp - startTime;
+                shuffledProgress = Math.min(progress, duration);
+
+                if (shuffledProgress < duration) {
+                    let visibleShuffledText = shuffleText(shuffledText);
+                    element.textContent = visibleShuffledText
+                } else if (originalIndex < originalText.length) {
+                    element.textContent = originalText.substring(0, originalIndex + 1);
+                    originalIndex++;
+                    setTimeout(() => {
+                        window.requestAnimationFrame(step);
+                    }, originalDelay);
+                    return;
+                }
+
+                if (progress < duration || originalIndex < originalText.length) {
+                    window.requestAnimationFrame(step);
+                }
+            }
+
+            element.style.animation = `shuffle-animation ${animationSpeed}s linear infinite`;
+            window.requestAnimationFrame(step);
+
+            setTimeout(() => {
+                element.style.animation = "none";
+                element.textContent = originalText;
+            }, duration);
+        }
+
+        const originalText = "NAME : SHOBANA RAMASAMY"
+        const shuffledText = shuffleText("$$$$$$$%%%%%6&^%$#2#$%^%$");
+        animateShuffle(originalText, shuffledText);
+    </script>
+</body>
+
+</html>
